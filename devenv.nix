@@ -37,4 +37,9 @@
     };
   };
 
+  tasks."python:typecheck" = {
+    description = "Type-check the codebase with basedpyright";
+    exec = "${lib.getExe pkgs.basedpyright} .";
+    after = [ "devenv:python:uv" ];
+  };
 }

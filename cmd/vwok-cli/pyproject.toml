@@ -1,0 +1,19 @@
+[project]
+name = "vwok-cli"
+version = "0.1.0"
+description = "Command line client for the VWOK API"
+requires-python = ">=3.14"
+dependencies = [
+    "vwok-client",
+    "typer>=0.27.0",
+]
+
+[project.scripts]
+vwok = "vwok_cli.main:app"
+
+[tool.uv.sources]
+vwok-client = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"

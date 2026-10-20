@@ -1,0 +1,17 @@
+[project]
+name = "vwok-client"
+version = "0.1.0"
+description = "Typed HTTP client for the VWOK API"
+readme = "README.md"
+authors = [
+    { name = "Felix Cornel", email = "felix.cornel@hello-charles.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.13.4",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"
