@@ -1,40 +1,21 @@
-import json
-from typing import Annotated, Any
-
 import typer
-from vwok_client import DEFAULT_BASE_URL, ApiError, VwokClient
+import vwok_client
+
+from vwok_cli.apps import catalog_app, operation_app
+from vwok_cli.apps._types import BaseUrlOption, ClientIdOption, ClientSecretOption
 
 app = typer.Typer(no_args_is_help=True)
+app.add_typer(catalog_app, name="catalog", help="Read catalogue data.")
+app.add_typer(operation_app, name="operation", help="Configure and validate builds.")
 
 
 @app.callback()
-def root() -> None:
-    """CLI for the VWOK API."""
-
-
-TokenOption = Annotated[str, typer.Option(envvar="TOKEN", help="Bearer token")]
-BaseUrlOption = Annotated[str, typer.Option(envvar="BASE_URL", help="API base URL")]
-
-
-def print_response(data: Any) -> None:
-    typer.echo(json.dumps(data, indent=2))
-
-
-@app.command()
-def request(
-    method: str,
-    path: str,
-    token: TokenOption,
-    base_url: BaseUrlOption = DEFAULT_BASE_URL,
-    body: Annotated[str | None, typer.Option(help="Raw JSON request body")] = None,
+def root(
+    ctx: typer.Context,
+    client_id: ClientIdOption = None,
+    client_secret: ClientSecretOption = None,
+    base_url: BaseUrlOption = vwok_client.DEFAULT_BASE_URL,
 ) -> None:
-    """Send a raw request, e.g. `vwok request GET /things`."""
-    client = VwokClient(token=token, base_url=base_url)
-    try:
-        data = client.request(
-            method.upper(), path, json=json.loads(body) if body else None
-        )
-    except ApiError as exc:
-        typer.echo(f"{exc.status_code}: {exc.body}", err=True)
-        raise typer.Exit(1) from exc
-    print_response(data)
+    """CLI for the VWOK API."""
+    # Validated lazily in get_client so `--help` works without credentials.
+    ctx.obj = (client_id, client_secret, base_url)
