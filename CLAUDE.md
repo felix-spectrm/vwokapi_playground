@@ -10,7 +10,7 @@ CLI client for the VWOK API, built with Typer + httpx.
 
 Config via env vars (or root flags placed before the subcommand, e.g. `vwok --client-id … catalog models DE VW`): `CLIENT_ID`, `CLIENT_SECRET` (OAuth client credentials; the client fetches and refreshes the 1-hour token), `BASE_URL` (optional). `.env` is auto-loaded by devenv.
 
-Commands: `vwok catalog models|base-configuration|types|options` and `vwok operation configure|check|marketing-code`. Path params are positional arguments; the request body is a JSON `PAYLOAD` argument (inline, `@file.json`, or `-` for stdin) validated into `Configuration`.
+Commands: `vwok catalog models|base-configuration|types|options` and `vwok operation configure|check|marketing-code|images|recover|resolve|solve|solutions`. Path params are positional arguments; the request body is a JSON `PAYLOAD` argument (inline, `@file.json`, or `-` for stdin) validated into `Configuration`.
 
 ## Architecture
 

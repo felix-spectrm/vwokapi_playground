@@ -93,6 +93,48 @@ class Choice:
 
 
 @define
+class ImageLink:
+    url: str
+    key: str | None = None
+    name: str | None = None
+
+
+@define
+class ConfigurationResult:
+    """A build returned by `recover` and `resolve` (bare) and `solve` (in `data`)."""
+
+    model_code: str | None = None
+    brand_code: str | None = None
+    model_description: str | None = None
+    marketing_code: str | None = None
+    options: list[OptionModel] = field(factory=list)
+
+
+@define
+class CodeDescription:
+    code: str
+    description: str | None = None
+
+
+@define
+class ConfigurationPrice:
+    price: float | None = None
+    currency: str | None = None
+    price_type: str | None = None
+
+
+@define
+class Solution:
+    add_options: list[OptionModel] = field(factory=list)
+    remove_options: list[OptionModel] = field(factory=list)
+    included_options: list[OptionModel] = field(factory=list)
+    tags: list[str] = field(factory=list)
+    configuration_price: ConfigurationPrice | None = None
+    model: CodeDescription | None = None
+    type: CodeDescription | None = None
+
+
+@define
 class CheckResponse:
     buildable: bool
     distinct: bool

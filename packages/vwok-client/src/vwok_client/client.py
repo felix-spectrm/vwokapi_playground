@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, Literal, Self
 
 from attrs import define
 
@@ -8,9 +8,13 @@ from vwok_client.models import (
     CheckResponse,
     Choice,
     Configuration,
+    ConfigurationResult,
     DataResponse,
+    ImageLink,
     MarketingCodeConfiguration,
     Model,
+    SearchStrategy,
+    Solution,
     TypeModel,
     TypeWithOptions,
     parse_response,
@@ -184,6 +188,162 @@ class VwokClient:
             MarketingCodeConfiguration,
             payload,
             time_to_live=time_to_live,
+            language_code=language_code,
+            product_data_key=product_data_key,
+        )
+
+    def list_images(
+        self,
+        country_code: str,
+        payload: Configuration,
+        *,
+        image_format: Literal["PNG", "JPG"] | None = None,
+        width: int | None = None,
+        language_code: str | None = None,
+        product_data_key: str | None = None,
+    ) -> DataResponse[ImageLink]:
+        """List image links for a build. VW access needs separate approval (403)."""
+        return self._call(
+            "POST",
+            f"/v3/operation/{country_code}/images",
+            DataResponse[ImageLink],
+            payload,
+            format=image_format,
+            width=width,
+            language_code=language_code,
+            product_data_key=product_data_key,
+        )
+
+    # Repair and completion. `preferred_options`, `nice_to_have`, `extend_with`,
+    # `ignore_category_types` and `remove_option` are passed through as OKAPI
+    # strings, e.g. preferred_options="PACKET:G46+HET:3RC".
+
+    def recover(
+        self,
+        country_code: str,
+        payload: Configuration,
+        *,
+        language_code: str | None = None,
+        product_data_key: str | None = None,
+    ) -> ConfigurationResult:
+        """Drop the conflicting options and return one buildable configuration."""
+        return self._call(
+            "POST",
+            f"/v3/operation/{country_code}/recover",
+            ConfigurationResult,
+            payload,
+            language_code=language_code,
+            product_data_key=product_data_key,
+        )
+
+    def resolve(
+        self,
+        country_code: str,
+        payload: Configuration,
+        *,
+        extended_order: bool | None = None,
+        preferred_options: str | None = None,
+        nice_to_have: str | None = None,
+        extend_with: str | None = None,
+        ignore_category_types: str | None = None,
+        search_strategy: SearchStrategy | None = None,
+        language_code: str | None = None,
+        product_data_key: str | None = None,
+    ) -> ConfigurationResult:
+        """Complete a partial, buildable configuration so it becomes distinct."""
+        return self._call(
+            "POST",
+            f"/v3/operation/{country_code}/resolve",
+            ConfigurationResult,
+            payload,
+            extended_order=extended_order,
+            preferred_options=preferred_options,
+            nice_to_have=nice_to_have,
+            extend_with=extend_with,
+            ignore_category_types=ignore_category_types,
+            search_strategy=search_strategy,
+            language_code=language_code,
+            product_data_key=product_data_key,
+        )
+
+    def solve(
+        self,
+        country_code: str,
+        payload: Configuration,
+        *,
+        count: int | None = None,
+        remove_option: str | None = None,
+        preferred_options: str | None = None,
+        nice_to_have: str | None = None,
+        extend_with: str | None = None,
+        ignore_category_types: str | None = None,
+        stick_to_basetype: bool | None = None,
+        stick_to_type: bool | None = None,
+        allow_change_of_model: bool | None = None,
+        force: bool | None = None,
+        search_strategy: SearchStrategy | None = None,
+        language_code: str | None = None,
+        product_data_key: str | None = None,
+    ) -> DataResponse[ConfigurationResult]:
+        """Return up to `count` complete alternative configurations."""
+        return self._call(
+            "POST",
+            f"/v3/operation/{country_code}/solve",
+            DataResponse[ConfigurationResult],
+            payload,
+            count=count,
+            remove_option=remove_option,
+            preferred_options=preferred_options,
+            nice_to_have=nice_to_have,
+            extend_with=extend_with,
+            ignore_category_types=ignore_category_types,
+            stick_to_basetype=stick_to_basetype,
+            stick_to_type=stick_to_type,
+            allow_change_of_model=allow_change_of_model,
+            force=force,
+            search_strategy=search_strategy,
+            language_code=language_code,
+            product_data_key=product_data_key,
+        )
+
+    def solutions(
+        self,
+        country_code: str,
+        payload: Configuration,
+        *,
+        count: int | None = None,
+        distinct: bool | None = None,
+        remove_option: str | None = None,
+        preferred_options: str | None = None,
+        nice_to_have: str | None = None,
+        extend_with: str | None = None,
+        ignore_category_types: str | None = None,
+        allow_change_of_basetype: bool | None = None,
+        allow_change_of_model: bool | None = None,
+        stick_to_type: bool | None = None,
+        force: bool | None = None,
+        search_strategy: SearchStrategy | None = None,
+        language_code: str | None = None,
+        product_data_key: str | None = None,
+    ) -> DataResponse[Solution]:
+        """Return ranked fixes (options to add and remove) for a broken build."""
+        return self._call(
+            "POST",
+            f"/v3/operation/{country_code}/solutions",
+            DataResponse[Solution],
+            payload,
+            count=count,
+            distinct=distinct,
+            remove_option=remove_option,
+            preferred_options=preferred_options,
+            nice_to_have=nice_to_have,
+            extend_with=extend_with,
+            ignore_category_types=ignore_category_types,
+            allow_change_of_basetype=allow_change_of_basetype,
+            allow_change_of_model=allow_change_of_model,
+            stick_to_type=stick_to_type,
+            force=force,
+            search_strategy=search_strategy,
             language_code=language_code,
             product_data_key=product_data_key,
         )

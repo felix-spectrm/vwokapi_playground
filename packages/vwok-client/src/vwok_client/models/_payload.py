@@ -1,10 +1,12 @@
 import json
-from typing import Any
+from typing import Any, Literal
 
 import cattrs
 from attrs import define, field
 
 from vwok_client.models._serialize import to_dict
+
+SearchStrategy = Literal["Shortest", "Cheapest"]
 
 
 @define
